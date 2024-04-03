@@ -18,8 +18,6 @@
     "@bull-board/express": "^5.15.1",
     "@bull-board/ui": "^5.15.1",
     "@faker-js/faker": "^8.4.1",
-    "@farcaster/auth-kit": "^0.1.4",
-    "@farcaster/hub-nodejs": "^0.10.23",
     "@neynar/nodejs-sdk": "^1.12.0",
     "@prisma/client": "^5.8.1",
     "@radix-ui/react-accordion": "^1.1.2",
