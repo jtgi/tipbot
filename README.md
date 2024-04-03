@@ -1,1 +1,1 @@
-# automod
+# tipbot mfers

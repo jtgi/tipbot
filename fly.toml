@@ -1,5 +1,9 @@
+# fly.toml app configuration file generated for tipbot-twilight-star-4707 on 2024-04-03T15:49:09+09:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
-app = 'automod'
+app = 'tipbot-twilight-star-4707'
 primary_region = 'lax'
 
 [build]
@@ -13,15 +17,14 @@ primary_region = 'lax'
   force_https = true
   auto_stop_machines = true
   auto_start_machines = true
-  max_machines_running = 1
   min_machines_running = 1
+
   [http_service.concurrency]
-      type = "requests"
-      soft_limit = 100
-      hard_limit = 200
-  processes = ['app']
+    type = 'requests'
+    hard_limit = 200
+    soft_limit = 100
 
 [[vm]]
+  memory = '1gb'
   cpu_kind = 'shared'
-  size = "shared-cpu-4x"
-  memory = "2gb"
+  cpus = 1

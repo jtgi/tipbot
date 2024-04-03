@@ -4,8 +4,8 @@
     "display": "standalone",
     "scope": "/",
     "start_url": "/",
-    "name": "automod",
-    "short_name": "automod",
+    "name": "tipbot",
+    "short_name": "tipbot",
     "description": "Enforce channel norms with bots",
     "icons": [
         {

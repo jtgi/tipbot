@@ -10,151 +10,42 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Order {
-  id        String    @id @default(cuid())
-  fid       String    @unique
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-}
-
-model InviteCode {
-  id     String  @id @default(cuid())
-  active Boolean @default(true)
-  limit  Int     @default(1)
-  note   String?
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-
-  claims User[]
-}
-
-model Otp {
-  id     String  @id @default(cuid())
-  code   String  @unique @default(cuid())
-  active Boolean @default(false)
-  userId String
-  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model User {
-  id          String    @id
-  name        String
-  avatarUrl   String?
-  email       String?   @unique
+  id String @id
+
+  username   String
+  avatarUrl  String?
+  email      String? @unique
+  signerUuid String  @unique
+
   plan        String    @default("basic")
   planExpiry  DateTime?
   planTokenId String?
 
   role String @default("user")
 
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  moderatedChannels ModeratedChannel[]
-  invite            InviteCode?        @relation(fields: [inviteCodeId], references: [id])
-  inviteCodeId      String?
-  otps              Otp[]
-  usage             Usage[]
+  actionType String?
+
+  degenTipType   String?
+  degenTipAmount Int?
+  degenTipPct    Int?
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  Settings  Settings[]
 }
 
-model ModeratedChannel {
-  id               String          @id
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
-  active           Boolean         @default(true)
-  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  imageUrl         String?
-  url              String?
-  userId           String
-  banThreshold     Int?
-  excludeCohosts   Boolean         @default(true)
-  excludeUsernames String          @default("[]")
-  ruleSets         RuleSet[]
-  moderationLogs   ModerationLog[]
-  cooldowns        Cooldown[]
-  comods           Comods[]
-  Usage            Usage[]
-}
+model Settings {
+  id String @id
 
-model Comods {
-  id        String           @id @default(cuid())
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
-  fid       String
-  username  String
-  avatarUrl String?
-  channel   ModeratedChannel @relation(fields: [channelId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  channelId String
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
 
-  @@unique([fid, channelId])
-}
+  theme    String @default("light")
+  language String @default("en")
+  currency String @default("usd")
+  timezone String @default("utc")
 
-model RuleSet {
-  id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  active    Boolean  @default(true)
-  target    String   @default("all")
-  rule      String // Stores JSON string of rules
-  actions   String // Stores JSON string of actions
-
-  channel   ModeratedChannel @relation(fields: [channelId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  channelId String
-}
-
-model ModerationLog {
-  id                    String           @id @default(cuid())
-  createdAt             DateTime         @default(now())
-  updatedAt             DateTime         @updatedAt
-  action                String
-  reason                String
-  castHash              String?
-  castText              String?
-  actor                 String           @default("system")
-  affectedUserFid       String
-  affectedUsername      String
-  affectedUserAvatarUrl String?
-  channel               ModeratedChannel @relation(fields: [channelId], references: [id])
-  channelId             String
-}
-
-model Status {
-  id        String    @id @default(cuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  active    Boolean   @default(true)
-  message   String
-  expiresAt DateTime?
-  type      String
-}
-
-model Cooldown {
-  id             String           @id @default(cuid())
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  active         Boolean          @default(true)
-  affectedUserId String
-  channel        ModeratedChannel @relation(fields: [channelId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  channelId      String
-  expiresAt      DateTime?
-
-  @@unique([affectedUserId, channelId])
-}
-
-model Usage {
-  id             String           @id @default(uuid())
-  userId         String
-  user           User             @relation(fields: [userId], references: [id])
-  channel        ModeratedChannel @relation(fields: [channelId], references: [id])
-  channelId      String
-  castsProcessed Int              @default(0)
-  monthYear      String // Format: "MM-YYYY"
-
-  @@unique([channelId, monthYear])
-  @@index([channelId, monthYear])
 }

@@ -25,22 +25,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
     (session.get("message") as { id: string; type: string; message: string } | null) ?? undefined;
   const impersonateAs = session.get("impersonateAs") ?? undefined;
 
-  const status = await db.status.findFirst({
-    where: {
-      active: true,
-      OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
-
   return typedjson(
     {
       user,
       impersonateAs,
       message,
-      status,
       env: getSharedEnv(),
     },
     {
@@ -52,7 +41,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function Index() {
-  const { status, env, message, impersonateAs, user } = useTypedLoaderData<typeof loader>();
+  const { env, message, impersonateAs, user } = useTypedLoaderData<typeof loader>();
 
   useEffect(() => {
     if (message) {
@@ -64,26 +53,8 @@ export default function Index() {
     }
   }, [message?.id]);
 
-  const farcasterConfig = {
-    rpcUrl: `https://optimism-mainnet.infura.io/v3/${env.infuraProjectId}`,
-    domain: new URL(env.hostUrl).host.split(":")[0],
-    siweUri: `${env.hostUrl}/login`,
-  };
-
   return (
-    <AuthKitProvider config={farcasterConfig}>
-      {status && (
-        <div
-          className={cn(
-            "fixed top-0 left-0 w-full text-white text-center py-2",
-            status.type === "warning" ? "bg-yellow-400" : "",
-            status.type === "info" ? "bg-primary" : ""
-          )}
-        >
-          {status.message}
-        </div>
-      )}
-
+    <div>
       {impersonateAs && (
         <div className="fixed top-0 left-0 w-full bg-primary/75 text-white text-center py-2">
           Impersonating as <span className="font-mono">{impersonateAs}</span>.
@@ -98,15 +69,19 @@ export default function Index() {
       >
         <nav className="w-full flex justify-between max-w-4xl mx-auto py-8">
           <Link to="/~" className="no-underline">
-            <h1 className="logo text-3xl">automod</h1>
+            <h1 className="logo text-3xl">tipbot</h1>
           </Link>
           <div className="flex space-x-4">
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <Avatar className="shadow p-1 w-11 h-11 hover:shadow-orange-500 transition-all duration-400">
-                  <AvatarImage className="rounded-full" src={user.avatarUrl ?? undefined} alt={user.name} />
+                  <AvatarImage
+                    className="rounded-full"
+                    src={user.avatarUrl ?? undefined}
+                    alt={user.username}
+                  />
                   <AvatarFallback className="text-white bg-primary">
-                    {user.name.slice(0, 2).toLocaleUpperCase()}
+                    {user.username.slice(0, 2).toLocaleUpperCase()}
                   </AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
@@ -117,7 +92,7 @@ export default function Index() {
                     fontFamily: "Kode Mono",
                   }}
                 >
-                  @{user.name}
+                  @{user.username}
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <Form method="post" action="/~/logout">
@@ -131,6 +106,6 @@ export default function Index() {
         </nav>
         <Outlet />
       </main>
-    </AuthKitProvider>
+    </div>
   );
 }

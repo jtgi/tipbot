@@ -8,7 +8,7 @@ export async function loader({ request }: ActionFunctionArgs) {
 
   await authenticator.authenticate("god", request, {
     successRedirect: "/~",
-    failureRedirect: "/login",
+    failureRedirect: "/",
   });
 }
 
