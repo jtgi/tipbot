@@ -12,7 +12,7 @@ export function handleError(error: unknown, { request }: { request: Request }) {
 }
 
 Sentry.init({
-  dsn: "https://5473e1495403d0b381b2556a80b3775f@o4506520941756416.ingest.sentry.io/4506827315937280",
+  dsn: "https://075988610087cd2a5014c2e9e8bda968@o4506520941756416.ingest.us.sentry.io/4507026429902848",
   tracesSampleRate: 0,
   enabled: process.env.NODE_ENV === "production",
 });
@@ -27,18 +27,8 @@ export default function handleRequest(
   loadContext: AppLoadContext
 ) {
   return isBotRequest(request.headers.get("user-agent"))
-    ? handleBotRequest(
-        request,
-        responseStatusCode,
-        responseHeaders,
-        remixContext
-      )
-    : handleBrowserRequest(
-        request,
-        responseStatusCode,
-        responseHeaders,
-        remixContext
-      );
+    ? handleBotRequest(request, responseStatusCode, responseHeaders, remixContext)
+    : handleBrowserRequest(request, responseStatusCode, responseHeaders, remixContext);
 }
 
 // We have some Remix apps in the wild already running with isbot@3 so we need
@@ -71,11 +61,7 @@ function handleBotRequest(
   return new Promise((resolve, reject) => {
     let shellRendered = false;
     const { pipe, abort } = renderToPipeableStream(
-      <RemixServer
-        context={remixContext}
-        url={request.url}
-        abortDelay={ABORT_DELAY}
-      />,
+      <RemixServer context={remixContext} url={request.url} abortDelay={ABORT_DELAY} />,
       {
         onAllReady() {
           shellRendered = true;
@@ -121,11 +107,7 @@ function handleBrowserRequest(
   return new Promise((resolve, reject) => {
     let shellRendered = false;
     const { pipe, abort } = renderToPipeableStream(
-      <RemixServer
-        context={remixContext}
-        url={request.url}
-        abortDelay={ABORT_DELAY}
-      />,
+      <RemixServer context={remixContext} url={request.url} abortDelay={ABORT_DELAY} />,
       {
         onShellReady() {
           shellRendered = true;

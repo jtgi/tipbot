@@ -4,7 +4,7 @@ import { startTransition, StrictMode, useEffect } from "react";
 import { hydrateRoot } from "react-dom/client";
 
 Sentry.init({
-  dsn: "https://5473e1495403d0b381b2556a80b3775f@o4506520941756416.ingest.sentry.io/4506827315937280",
+  dsn: "https://075988610087cd2a5014c2e9e8bda968@o4506520941756416.ingest.us.sentry.io/4507026429902848",
   tracesSampleRate: 0,
   replaysSessionSampleRate: 0,
   replaysOnErrorSampleRate: 0.1,
