@@ -6,7 +6,7 @@ import { Button } from "~/components/ui/button";
 import { getSharedEnv } from "~/lib/utils.server";
 import { useEffect, useRef, useState } from "react";
 import { authenticator } from "~/lib/auth.server";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Loader } from "lucide-react";
 
 // export meta
 export const meta: MetaFunction<typeof loader> = (data) => {
@@ -86,7 +86,7 @@ export default function Home() {
           <Link to="/~" className="no-underline">
             <h1 className="text-6xl logo text-white opacity-80">PAPERBOY</h1>
           </Link>
-          <h2 className="font-normal mb-8 opacity-50 text-white">One click tipping on Farcaster</h2>
+          <h2 className="font-normal mb-8 opacity-70 text-white">One click tipping on Farcaster</h2>
         </div>
       </div>
 
@@ -102,19 +102,26 @@ export default function Home() {
         <ClientOnly fallback={<Button>Loading...</Button>}>
           {() => (
             <>
-              <div
-                className="neynar_signin"
-                data-background_color="#cdeef7"
-                data-styles='{ "color": "#000000", "font-size": "16px", "font-weight": "bold" }'
-                data-client_id={env.neynarClientId}
-                data-success-callback="_onSignInSuccess"
-              />
+              {loggingIn ? (
+                <Button size={"xl"} className="w-[200px]">
+                  <Loader className="animate-spin w-5 h-5" />
+                </Button>
+              ) : (
+                <div
+                  onClick={() => setLoggingIn(true)}
+                  className="neynar_signin"
+                  data-theme="dark"
+                  data-styles='{ "font-size": "16px", "font-weight": "bold" }'
+                  data-client_id={env.neynarClientId}
+                  data-success-callback="_onSignInSuccess"
+                />
+              )}
             </>
           )}
         </ClientOnly>
       )}
-      <p className="text-white opacity-50 text-sm mt-4">
-        Built by{" "}
+      <p className="text-white text-sm mt-10 opacity-50 font-mono">
+        made by{" "}
         <a href="https://warpcast.com/jtgi" target="_blank">
           @jtgi
         </a>

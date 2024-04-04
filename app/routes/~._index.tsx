@@ -99,7 +99,13 @@ export default function FrameConfig() {
   return (
     <div className="space-y-12 max-w-md">
       <Form method="post" className="space-y-8">
-        <p className="font-medium">Degen</p>
+        <div>
+          <p className="font-medium">Degen</p>
+          <p className="text-sm text-gray-400">
+            Setup paperboy to deliver degen in one click. You can set a fixed amount or a percentage of your
+            daily allowance.
+          </p>
+        </div>
         <hr />
         <Card className="pb-4">
           <CardHeader className="pb-2">
