@@ -9,7 +9,7 @@ import { authenticator } from "~/lib/auth.server";
 import { ArrowRight, Loader } from "lucide-react";
 
 // export meta
-export const meta: MetaFunction<typeof loader> = (data) => {
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
     { title: "paperboy" },
     {
@@ -19,6 +19,30 @@ export const meta: MetaFunction<typeof loader> = (data) => {
     {
       name: "description",
       content: "one click tipping on farcaster",
+    },
+    {
+      property: "fc:frame",
+      content: "vNext",
+    },
+    {
+      property: "fc:frame:image",
+      content: `${data.env.hostUrl}/install.png`,
+    },
+    {
+      property: "og:image",
+      content: `${data.env.hostUrl}/install.png`,
+    },
+    {
+      property: "fc:frame:button:1",
+      content: "Install Cast Action",
+    },
+    {
+      property: "fc:frame:button:1:action",
+      content: "post_redirect",
+    },
+    {
+      property: "fc:frame:post_url",
+      content: `${data.env.hostUrl}/api/install`,
     },
   ];
 };

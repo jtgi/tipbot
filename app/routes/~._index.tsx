@@ -100,7 +100,7 @@ export default function FrameConfig() {
     <div className="space-y-12 max-w-md">
       <Form method="post" className="space-y-8">
         <div>
-          <p className="font-medium">Degen</p>
+          <p className="font-medium">Degen Tips</p>
           <p className="text-sm text-gray-400">
             Setup paperboy to deliver degen in one click. You can set a fixed amount or a percentage of your
             daily allowance.
