@@ -3,7 +3,6 @@ import { cssBundleHref } from "@remix-run/css-bundle";
 
 import rootStyles from "~/root.css";
 
-import farcasterStylesUrl from "@farcaster/auth-kit/styles.css";
 import type { LinksFunction, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import {
   Link,
