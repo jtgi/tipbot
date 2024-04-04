@@ -18,6 +18,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~
 import { Card, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { db } from "~/lib/db.server";
 import { z } from "zod";
+import { hamAllowance } from "~/lib/ham.server";
+
+const actionTypes = ["degen", "ham"] as const;
+export type ActionType = (typeof actionTypes)[number];
 
 export async function action({ request }: ActionFunctionArgs) {
   const user = await requireUser({ request });
@@ -34,8 +38,8 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   if (
-    result.data.degenTipType === "pct" &&
-    (Number(result.data.degenTipAmount) < 0 || Number(result.data.degenTipAmount) > 100)
+    result.data.tipType === "pct" &&
+    (Number(result.data.tipAmount) < 0 || Number(result.data.tipAmount) > 100)
   ) {
     return errorResponse({
       request,
@@ -43,7 +47,7 @@ export async function action({ request }: ActionFunctionArgs) {
     });
   }
 
-  if (result.data.degenTipType === "amt" && Number(result.data.degenTipAmount) < 0) {
+  if (result.data.tipType === "amt" && Number(result.data.tipAmount) < 0) {
     return errorResponse({
       request,
       message: "Choose an amount greater than 0",
@@ -55,8 +59,8 @@ export async function action({ request }: ActionFunctionArgs) {
       id: user.id,
     },
     data: {
-      degenTipAmount: result.data.degenTipAmount,
-      degenTipType: result.data.degenTipType,
+      tipAmount: result.data.tipAmount,
+      tipType: result.data.tipType,
     },
   });
 
@@ -69,21 +73,27 @@ export async function action({ request }: ActionFunctionArgs) {
 export async function loader({ request }: LoaderFunctionArgs) {
   const user = await requireUser({ request });
 
-  const { allowance, remaining } = await tipAllowance({ fid: user.id });
+  let allowance, remaining;
+  if (user.actionType === "degen") {
+    const tips = await tipAllowance({ fid: user.id });
+    allowance = tips.allowance;
+    remaining = tips.remaining;
+  } else if (user.actionType === "ham") {
+    const tips = await hamAllowance({ fid: user.id });
+    allowance = tips.allowance;
+    remaining = tips.allowance - tips.used;
+  }
 
   return typedjson({
     user,
-    degenAllowance: allowance,
-    degenRemaining: remaining,
+    allowance,
+    remaining,
     env: getSharedEnv(),
   });
 }
 
-export const actionTypes = ["degen"] as const;
-export type ActionType = (typeof actionTypes)[number];
-
 export default function FrameConfig() {
-  const { user, degenAllowance, degenRemaining } = useTypedLoaderData<typeof loader>();
+  const { user, allowance, remaining } = useTypedLoaderData<typeof loader>();
   const navigation = useNavigation();
 
   return (
@@ -94,7 +104,7 @@ export default function FrameConfig() {
         <Card className="pb-4">
           <CardHeader className="pb-2">
             <CardDescription>Degen Tip Allowance</CardDescription>
-            <CardTitle className="text-2xl">{Number(degenAllowance).toLocaleString()} Per Day</CardTitle>
+            <CardTitle className="text-2xl">{Number(allowance).toLocaleString()} Per Day</CardTitle>
           </CardHeader>
         </Card>
 
@@ -107,7 +117,7 @@ export default function FrameConfig() {
           </div>
           <div>
             <div className="flex gap-1">
-              <Select name="degenTipType" defaultValue={user.degenTipType || "pct"}>
+              <Select name="tipType" defaultValue={user.tipType || "pct"}>
                 <SelectTrigger className="w-[75px]">
                   <SelectValue placeholder="Type" />
                 </SelectTrigger>
@@ -118,10 +128,10 @@ export default function FrameConfig() {
               </Select>
               <Input
                 className="max-w-[200px]"
-                name="degenTipAmount"
+                name="tipAmount"
                 required
                 pattern="\d+"
-                defaultValue={user.degenTipAmount || 10}
+                defaultValue={user.tipAmount || 10}
               />
             </div>
           </div>
@@ -152,13 +162,14 @@ export function CopyButton({ frame, env }: { frame: { slug: string }; env: { hos
 
 export const TipSettingsSchema = z
   .object({
-    degenTipAmount: z.coerce.number(),
-    degenTipType: z.union([z.literal("pct"), z.literal("amt")]),
+    type: z.enum(actionTypes),
+    tipAmount: z.coerce.number(),
+    tipType: z.union([z.literal("pct"), z.literal("amt")]),
   })
   .refine(
     (data) => {
-      if (data.degenTipType === "pct") {
-        return data.degenTipAmount >= 0 && data.degenTipAmount <= 100;
+      if (data.tipType === "pct") {
+        return data.tipAmount >= 0 && data.tipAmount <= 100;
       }
 
       return true;

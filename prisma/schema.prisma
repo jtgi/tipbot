@@ -26,9 +26,9 @@ model User {
 
   actionType String?
 
-  degenTipType   String?
-  degenTipAmount Int?
-  degenTipPct    Int?
+  tipType   String?
+  tipAmount Int?
+  tipPct    Int?
 
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt

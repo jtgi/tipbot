@@ -22,7 +22,7 @@ export async function action({ request }: ActionFunctionArgs) {
     },
   });
 
-  if (!user || !user.degenTipAmount || !user.degenTipType) {
+  if (!user || !user.tipAmount || !user.tipType) {
     return json(
       {
         message: `Connect your account at ${env.hostUrl}`,
@@ -34,8 +34,8 @@ export async function action({ request }: ActionFunctionArgs) {
   const allowance = await tipAllowance({ fid: user.id });
   const tipAmount = computeTipAmount({
     tipAllowance: allowance,
-    amount: user.degenTipAmount,
-    type: user.degenTipType as "pct" | "amt",
+    amount: user.tipAmount,
+    type: user.tipType as "pct" | "amt",
   });
 
   if (tipAmount === 0) {

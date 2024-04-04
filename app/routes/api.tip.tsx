@@ -46,8 +46,8 @@ export async function action({ request }: ActionFunctionArgs) {
   const allowance = await tipAllowance({ fid: user.id });
   const tipAmount = computeTipAmount({
     tipAllowance: allowance,
-    amount: result.data.degenTipAmount,
-    type: result.data.degenTipType,
+    amount: result.data.tipAmount,
+    type: result.data.tipType,
   });
 
   if (tipAmount === 0) {

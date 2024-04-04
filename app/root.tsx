@@ -47,7 +47,6 @@ export const links: LinksFunction = () => [
     rel: "manifest",
     href: "/site.webmanifest",
   },
-  { rel: "stylesheet", href: farcasterStylesUrl },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   { rel: "preconnect", href: "https://fonts.gstatic.com" },
   {
@@ -64,60 +63,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
     user,
   });
 }
-
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
-  return [
-    { title: "tipbot | seamless warpcast tipping" },
-    {
-      property: "og:title",
-      content: "tipbot | seamless warpcast tipping",
-    },
-    {
-      name: "description",
-      content: "one click tips",
-    },
-    {
-      name: "fc:frame:cast_action",
-      content: `${data.env.hostUrl}/api/custom-tip`,
-    },
-    {
-      name: "fc:frame:cast_action:name",
-      content: "Tip Degen",
-    },
-    {
-      name: "fc:frame:cast_action",
-      content: `${data.env.hostUrl}/api/tip?degenTipAmount=10&degenTipType=pct`,
-    },
-    {
-      name: "fc:frame:cast_action:name",
-      content: "Tip 10%",
-    },
-    {
-      name: "fc:frame:cast_action",
-      content: `${data.env.hostUrl}/api/tip?degenTipAmount=20&degenTipType=pct`,
-    },
-    {
-      name: "fc:frame:cast_action:name",
-      content: "Tip 20%",
-    },
-    {
-      name: "fc:frame:cast_action",
-      content: `${data.env.hostUrl}/api/tip?degenTipAmount=100&degenTipType=amt`,
-    },
-    {
-      name: "fc:frame:cast_action:name",
-      content: "Tip 100",
-    },
-    {
-      name: "fc:frame:cast_action",
-      content: `${data.env.hostUrl}/api/tip?degenTipAmount=1000&type=amt`,
-    },
-    {
-      name: "fc:frame:cast_action:name",
-      content: "Tip 1000",
-    },
-  ];
-};
 
 function App() {
   const { env, user } = useTypedLoaderData<typeof loader>();
