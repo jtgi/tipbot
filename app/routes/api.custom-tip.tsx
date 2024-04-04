@@ -10,11 +10,9 @@ export async function action({ request }: ActionFunctionArgs) {
   const data = await request.json();
   const env = getSharedEnv();
 
-  const fid = data.fid;
-  const hash = data.hash;
-  //   const message = await parseMessage(data);
-  //   const fid = String(message.action.interactor.fid)
-  //   const hash = message.action.cast.hash
+  const message = await parseMessage(data);
+  const fid = String(message.action.interactor.fid);
+  const hash = message.action.cast.hash;
 
   const user = await db.user.findFirst({
     where: {

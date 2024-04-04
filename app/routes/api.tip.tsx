@@ -10,11 +10,9 @@ export async function action({ request }: ActionFunctionArgs) {
   const data = await request.json();
   const env = getSharedEnv();
 
-  const fid = data.fid;
-  const hash = data.hash;
-  //   const message = await parseMessage(data);
-  //   const fid = String(message.action.interactor.fid)
-  //   const hash = message.action.cast.hash
+  const message = await parseMessage(data);
+  const fid = String(message.action.interactor.fid);
+  const hash = message.action.cast.hash;
 
   const user = await db.user.findFirst({
     where: {
@@ -38,7 +36,7 @@ export async function action({ request }: ActionFunctionArgs) {
   if (!result.success) {
     return json(
       {
-        message: `Oops${formatZodError(result.error)}`,
+        message: formatZodError(result.error),
       },
       { status: 400 }
     );
@@ -74,7 +72,7 @@ export async function action({ request }: ActionFunctionArgs) {
     });
   }
 
-  console.log(`${user.id} replied ${reply.hash}`, reply);
+  console.log(`${user.id} replied to ${hash} with ${reply.hash}`, reply);
 
   return json({
     message: `Tipped ${tipAmount} $DEGEN`,
