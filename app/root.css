@@ -60,13 +60,18 @@
   }
 
   .logo {
-    @apply text-primary;
-
-    font-family: "Helvetica", "Roboto", "Inter", "Arial";
+    font-family: "Tilt Warp", "Helvetica", "Roboto", "Inter", "Arial";
     font-optical-sizing: auto;
-    font-weight: 700;
+    font-weight: 400;
     font-style: normal;
     letter-spacing: -0.07em;
+    color: rgb(253, 253, 243); /* Text color */
+    font-size: 2em; /* Adjust size as needed */
+    font-size: 2em; /* Adjust size as needed */
+    text-shadow:
+      4px 4px 0 #000,  /* Bottom right black shadow */
+      4px 4px 0 #000,  /* More offset bottom right black shadow */
+      4px 4px 0 #000;  /* Even more offset bottom right black shadow */
   }
 
   h1 {

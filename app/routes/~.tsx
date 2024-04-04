@@ -67,7 +67,7 @@ export default function Index() {
       >
         <nav className="w-full flex justify-between max-w-4xl mx-auto py-8">
           <Link to="/~" className="no-underline">
-            <h1 className="logo text-3xl">tipbot</h1>
+            <h1 className="logo text-3xl">PAPERBOY</h1>
           </Link>
           <div className="flex space-x-4">
             <DropdownMenu>

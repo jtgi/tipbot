@@ -1,10 +1,8 @@
 import { ActionFunctionArgs, json } from "@remix-run/node";
-import invariant from "tiny-invariant";
 import { db } from "~/lib/db.server";
 import { computeTipAmount, tipAllowance } from "~/lib/degen.server";
 import { neynar } from "~/lib/neynar.server";
-import { formatZodError, getSharedEnv, parseMessage } from "~/lib/utils.server";
-import { TipSettingsSchema } from "./~._index";
+import { getSharedEnv, parseMessage } from "~/lib/utils.server";
 
 export async function action({ request }: ActionFunctionArgs) {
   const data = await request.json();
@@ -23,7 +21,7 @@ export async function action({ request }: ActionFunctionArgs) {
   if (!user || !user.tipAmount || !user.tipType) {
     return json(
       {
-        message: `Connect your account at ${env.hostUrl}`,
+        message: `Sign up at ${env.hostUrl}`,
       },
       { status: 404 }
     );
@@ -49,7 +47,19 @@ export async function action({ request }: ActionFunctionArgs) {
     .publishCast(user.signerUuid, `${tipAmount} $DEGEN`, {
       replyTo: hash,
     })
-    .catch((e) => console.error(e.message));
+    .catch((e) => {
+      console.error(e.message);
+      return null;
+    });
+
+  if (reply === null) {
+    return json(
+      {
+        message: `Error tipping. Try again.`,
+      },
+      { status: 400 }
+    );
+  }
 
   if (reply) {
     console.log(`${user.id} replied ${reply.hash}`, reply);

@@ -11,10 +11,10 @@ import { ArrowRight } from "lucide-react";
 // export meta
 export const meta: MetaFunction<typeof loader> = (data) => {
   return [
-    { title: "tipbot" },
+    { title: "paperboy" },
     {
       property: "og:title",
-      content: "tipbot",
+      content: "paperboy",
     },
     {
       name: "description",
@@ -80,11 +80,11 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="h-full w-full flex flex-col items-center justify-center min-h-screen bg-slate-400">
+    <div className="h-full w-full flex flex-col items-center justify-center min-h-screen bg-[#04abd7]">
       <div className="max-w-xl flex flex-col justify-center items-center gap-8">
         <div className="flex flex-col items-center">
           <Link to="/~" className="no-underline">
-            <h1 className="text-6xl logo text-white opacity-80">tipbot</h1>
+            <h1 className="text-6xl logo text-white opacity-80">PAPERBOY</h1>
           </Link>
           <h2 className="font-normal mb-8 opacity-50 text-white">One click tipping on Farcaster</h2>
         </div>
@@ -104,6 +104,8 @@ export default function Home() {
             <>
               <div
                 className="neynar_signin"
+                data-background_color="#cdeef7"
+                data-styles='{ "color": "#000000", "font-size": "16px", "font-weight": "bold" }'
                 data-client_id={env.neynarClientId}
                 data-success-callback="_onSignInSuccess"
               />
@@ -111,6 +113,12 @@ export default function Home() {
           )}
         </ClientOnly>
       )}
+      <p className="text-white opacity-50 text-sm mt-4">
+        Built by{" "}
+        <a href="https://warpcast.com/jtgi" target="_blank">
+          @jtgi
+        </a>
+      </p>
     </div>
   );
 }
