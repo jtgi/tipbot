@@ -33,7 +33,7 @@ export async function action({ request }: ActionFunctionArgs) {
   if (!result.success) {
     return errorResponse({
       request,
-      message: `Oops${formatZodError(result.error)}`,
+      message: formatZodError(result.error),
     });
   }
 
@@ -117,6 +117,7 @@ export default function FrameConfig() {
           </div>
           <div>
             <div className="flex gap-1">
+              <input type="hidden" name="type" value={user.actionType || "degen"} />
               <Select name="tipType" defaultValue={user.tipType || "pct"}>
                 <SelectTrigger className="w-[75px]">
                   <SelectValue placeholder="Type" />
