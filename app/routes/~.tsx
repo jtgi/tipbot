@@ -1,4 +1,3 @@
-import { AuthKitProvider } from "@farcaster/auth-kit";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { Form, Link, Outlet } from "@remix-run/react";
 import { useEffect } from "react";
@@ -14,7 +13,6 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { commitSession, getSession } from "~/lib/auth.server";
-import { db } from "~/lib/db.server";
 import { cn } from "~/lib/utils";
 import { getSharedEnv, requireUser } from "~/lib/utils.server";
 
