@@ -72,6 +72,8 @@ export async function parseMessage(payload: any) {
     throw new Error("Invalid message");
   }
 
+  console.log(message.action.url);
+  console.log(getSharedEnv().hostUrl);
   const host = new URL(message.action.url).host;
   if (host !== new URL(getSharedEnv().hostUrl).host) {
     throw new Error("No spoofs sir");
