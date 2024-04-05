@@ -101,6 +101,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function FrameConfig() {
   const { user, allowance, source, remaining } = useTypedLoaderData<typeof loader>();
   const navigation = useNavigation();
+  const sourceUrl = source?.includes("nook")
+    ? `https://nook.social/channel/paperboy`
+    : `https://warpcast.com/~/channel/paperboy`;
 
   return (
     <div className="space-y-12 max-w-md">
@@ -112,18 +115,13 @@ export default function FrameConfig() {
               <div className="flex flex-col gap-4">
                 <div>
                   Jump back to{" "}
-                  <a href={`https://warpcast.com/~/channel/paperboy`} target="_blank" rel="noreferrer">
+                  <a href={sourceUrl} target="_blank" rel="noreferrer">
                     /paperboy
                   </a>{" "}
                   to finish setting up
                 </div>
                 <Button asChild>
-                  <a
-                    className="no-underline"
-                    href={`https://warpcast.com/~/channel/paperboy`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
+                  <a className="no-underline" href={sourceUrl} target="_blank" rel="noreferrer">
                     Open /paperboy <ArrowUpRight className="inline ml-1 w-3 h-3" />
                   </a>
                 </Button>
