@@ -19,6 +19,9 @@ import { Card, CardDescription, CardHeader, CardTitle } from "~/components/ui/ca
 import { db } from "~/lib/db.server";
 import { z } from "zod";
 import { hamAllowance } from "~/lib/ham.server";
+import { getSession } from "~/lib/auth.server";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "~/components/ui/dialog";
+import { ArrowUpRight } from "lucide-react";
 
 const actionTypes = ["degen", "ham"] as const;
 export type ActionType = (typeof actionTypes)[number];
@@ -71,7 +74,9 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
+  const url = new URL(request.url);
   const user = await requireUser({ request });
+  const source = url.searchParams.get("source") || null;
 
   let allowance, remaining;
   if (user.actionType === "degen") {
@@ -88,16 +93,45 @@ export async function loader({ request }: LoaderFunctionArgs) {
     user,
     allowance,
     remaining,
+    source,
     env: getSharedEnv(),
   });
 }
 
 export default function FrameConfig() {
-  const { user, allowance, remaining } = useTypedLoaderData<typeof loader>();
+  const { user, allowance, source, remaining } = useTypedLoaderData<typeof loader>();
   const navigation = useNavigation();
 
   return (
     <div className="space-y-12 max-w-md">
+      <Dialog defaultOpen={!!source}>
+        <DialogContent onOpenAutoFocus={(evt) => evt.preventDefault()}>
+          <DialogHeader>
+            <DialogTitle>Success!</DialogTitle>
+            <DialogDescription asChild>
+              <div className="flex flex-col gap-4">
+                <div>
+                  Jump back to{" "}
+                  <a href={`https://warpcast.com/~/channel/paperboy`} target="_blank" rel="noreferrer">
+                    /paperboy
+                  </a>{" "}
+                  to finish setting up
+                </div>
+                <Button asChild>
+                  <a
+                    className="no-underline"
+                    href={`https://warpcast.com/~/channel/paperboy`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Open /paperboy <ArrowUpRight className="inline ml-1 w-3 h-3" />
+                  </a>
+                </Button>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
       <Form method="post" className="space-y-8">
         <div>
           <p className="font-medium">Degen Tips</p>

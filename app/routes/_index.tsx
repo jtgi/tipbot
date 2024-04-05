@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { authenticator, commitSession, getSession } from "~/lib/auth.server";
 import { ArrowRight, CheckIcon, Loader } from "lucide-react";
 import { Alert } from "~/components/ui/alert";
+import { toast } from "sonner";
 
 // export meta
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
@@ -73,14 +74,11 @@ export default function Home() {
     const params = new URLSearchParams();
     params.append("signerUuid", data.signer_uuid);
     params.append("fid", data.fid);
+    source && params.append("source", source);
 
-    if (source) {
-      setSignInComplete(true);
-    } else {
-      navigate(`/auth/neynar?${params}`, {
-        replace: true,
-      });
-    }
+    navigate(`/auth/neynar?${params}`, {
+      replace: true,
+    });
   };
 
   useEffect(() => {
@@ -111,6 +109,8 @@ export default function Home() {
     appendButton();
     bindSignInSuccess();
   }, []);
+
+  console.log(user);
 
   return (
     <div className="h-full w-full flex flex-col items-center justify-center min-h-screen bg-[#04abd7]">
