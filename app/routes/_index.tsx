@@ -5,8 +5,9 @@ import { typedjson, useTypedLoaderData } from "remix-typedjson";
 import { Button } from "~/components/ui/button";
 import { getSharedEnv } from "~/lib/utils.server";
 import { useEffect, useRef, useState } from "react";
-import { authenticator } from "~/lib/auth.server";
-import { ArrowRight, Loader } from "lucide-react";
+import { authenticator, commitSession, getSession } from "~/lib/auth.server";
+import { ArrowRight, CheckIcon, Loader } from "lucide-react";
+import { Alert } from "~/components/ui/alert";
 
 // export meta
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
@@ -50,17 +51,21 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 export async function loader({ request }: LoaderFunctionArgs) {
   const user = await authenticator.isAuthenticated(request);
   const env = getSharedEnv();
+  const url = new URL(request.url);
+  const source = url.searchParams.get("source") || null;
+
   return typedjson({
     env,
     user,
+    source,
   });
 }
 
 export default function Home() {
-  const { env, user } = useTypedLoaderData<typeof loader>();
+  const { env, user, source } = useTypedLoaderData<typeof loader>();
   const navigate = useNavigate();
   const [loggingIn, setLoggingIn] = useState(false);
-  const coin = useRef<HTMLAudioElement>();
+  const [signInComplete, setSignInComplete] = useState(false);
 
   const onSuccess = (data: { signer_uuid: string; fid: string }) => {
     setLoggingIn(true);
@@ -69,9 +74,13 @@ export default function Home() {
     params.append("signerUuid", data.signer_uuid);
     params.append("fid", data.fid);
 
-    navigate(`/auth/neynar?${params}`, {
-      replace: true,
-    });
+    if (source) {
+      setSignInComplete(true);
+    } else {
+      navigate(`/auth/neynar?${params}`, {
+        replace: true,
+      });
+    }
   };
 
   useEffect(() => {
@@ -116,34 +125,50 @@ export default function Home() {
 
       <hr />
 
-      {user ? (
-        <Button asChild>
-          <Link to="/~" className="no-underline">
-            Go to App <ArrowRight className="pl-2 w-4 h-4" />
-          </Link>
-        </Button>
-      ) : (
-        <ClientOnly fallback={<Button>Loading...</Button>}>
-          {() => (
-            <>
-              {loggingIn ? (
-                <Button size={"xl"} className="w-[200px]">
-                  <Loader className="animate-spin w-5 h-5" />
-                </Button>
-              ) : (
-                <div
-                  onClick={() => setLoggingIn(true)}
-                  className="neynar_signin"
-                  data-theme="dark"
-                  data-styles='{ "font-size": "16px", "font-weight": "bold" }'
-                  data-client_id={env.neynarClientId}
-                  data-success-callback="_onSignInSuccess"
-                />
-              )}
-            </>
-          )}
-        </ClientOnly>
-      )}
+      {(() => {
+        if ((user && source) || (signInComplete && source)) {
+          if (source.includes("warpcast")) {
+            return (
+              <Button asChild size="xl">
+                <Link className="no-underline" to="https://warpcast.com/~/channel/paperboy">
+                  Back to Warpcast
+                </Link>
+              </Button>
+            );
+          } else {
+            <Alert className="max-w-xl mx-auto">
+              <div>
+                <CheckIcon /> Connection Complete. Go back to the frame to continue.
+              </div>
+            </Alert>;
+          }
+        } else {
+          return (
+            <ClientOnly fallback={<Button size="xl">Loading...</Button>}>
+              {() => {
+                return (
+                  <>
+                    {loggingIn ? (
+                      <Button size={"xl"} className="w-[200px]">
+                        <Loader className="animate-spin w-5 h-5" />
+                      </Button>
+                    ) : (
+                      <div
+                        onClick={() => setLoggingIn(true)}
+                        className="neynar_signin"
+                        data-theme="dark"
+                        data-styles='{ "font-size": "16px", "font-weight": "bold" }'
+                        data-client_id={env.neynarClientId}
+                        data-success-callback="_onSignInSuccess"
+                      />
+                    )}
+                  </>
+                );
+              }}
+            </ClientOnly>
+          );
+        }
+      })()}
       <p className="text-white text-sm mt-10 opacity-50 font-mono">
         made by{" "}
         <a href="https://warpcast.com/jtgi" target="_blank">
