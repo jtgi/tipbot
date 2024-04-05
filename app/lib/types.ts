@@ -9,6 +9,9 @@ export interface MessageResponse {
 }
 
 export interface FrameAction {
+  input: {
+    text: string | undefined;
+  };
   object: string;
   interactor: Interactor;
   tapped_button: TappedButton;

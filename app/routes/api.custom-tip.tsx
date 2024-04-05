@@ -63,7 +63,7 @@ export async function action({ request }: ActionFunctionArgs) {
     }
 
     if (reply) {
-      console.log(`${user.id} replied ${reply.hash}`, reply);
+      console.log(`${user.id} replied ${reply.hash}, text: ${reply.text}`);
     }
 
     return json({

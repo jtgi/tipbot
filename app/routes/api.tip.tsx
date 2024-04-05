@@ -72,7 +72,7 @@ export async function action({ request }: ActionFunctionArgs) {
     });
   }
 
-  console.log(`${user.id} replied to ${hash} with ${reply.hash}`, reply);
+  console.log(`${user.id} replied to ${hash} with ${reply.hash}, text: ${reply.text}`);
 
   return json({
     message: `Tipped ${tipAmount} $DEGEN`,
