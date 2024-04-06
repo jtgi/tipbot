@@ -21,10 +21,10 @@ jobs:
         with:
           cache: npm
           cache-dependency-path: ./package.json
-          node-version: 18
+          node-version: 20
 
       - name: Install deps
-        run: npm install -g node-gyp && npm install
+        run: npm install
 
       - name: Generate types
         run: npx prisma generate
