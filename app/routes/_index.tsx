@@ -28,11 +28,11 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
     },
     {
       property: "fc:frame:image",
-      content: `${data.env.hostUrl}/install.png`,
+      content: `${data.env.hostUrl}/install-degen.png`,
     },
     {
       property: "og:image",
-      content: `${data.env.hostUrl}/install.png`,
+      content: `${data.env.hostUrl}/install-degen.png`,
     },
     {
       property: "fc:frame:button:1",
@@ -44,7 +44,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
     },
     {
       property: "fc:frame:post_url",
-      content: `${data.env.hostUrl}/api/install`,
+      content: `${data.env.hostUrl}/api/install-degen?origin=${data.origin}`,
     },
   ];
 };
@@ -54,11 +54,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const env = getSharedEnv();
   const url = new URL(request.url);
   const source = url.searchParams.get("source") || null;
+  const origin = request.headers.get("origin") || "warpcast.com";
 
   return typedjson({
     env,
     user,
     source,
+    origin,
   });
 }
 

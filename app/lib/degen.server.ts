@@ -30,8 +30,8 @@ export async function tipAllowance(args: { fid: string }) {
 
   return {
     raw,
-    allowance: degenAllowance,
-    remaining: degenRemaining,
+    allowance: isNaN(degenAllowance) ? 0 : degenAllowance,
+    remaining: isNaN(degenRemaining) ? 0 : degenRemaining,
   };
 }
 
