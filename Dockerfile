@@ -1,7 +1,7 @@
 # syntax = docker/dockerfile:1
 
 # Adjust NODE_VERSION as desired
-ARG NODE_VERSION=18.17.1
+ARG NODE_VERSION=20.9.0
 FROM node:${NODE_VERSION}-slim as base
 
 LABEL fly_launch_runtime="Remix"
@@ -15,7 +15,6 @@ ENV PORT="3000"
 ENV DATABASE_URL=file:/data/sqlite.db
 
 # Install pnpm
-ARG PNPM_VERSION=8.10.2
 ARG PNPM_VERSION=8.10.2
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y openssl sqlite3 && \
