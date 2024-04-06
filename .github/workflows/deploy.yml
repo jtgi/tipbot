@@ -24,7 +24,7 @@ jobs:
           node-version: 18
 
       - name: Install deps
-        run: npm global add node-gyp && npm install
+        run: npm install -g node-gyp && npm install
 
       - name: Generate types
         run: npx prisma generate
