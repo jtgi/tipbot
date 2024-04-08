@@ -79,7 +79,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const source = url.searchParams.get("source") || null;
 
   let allowance, remaining;
-  if (user.actionType === "degen") {
+  if (user.actionType === "degen" || !user.actionType) {
     const tips = await tipAllowance({ fid: user.id });
     allowance = tips.allowance;
     remaining = tips.remaining;

@@ -24,27 +24,11 @@ model User {
 
   role String @default("user")
 
-  actionType String?
+  actionType String? @default("degen")
 
   tipType   String?
   tipAmount Int?
   tipPct    Int?
-
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  Settings  Settings[]
-}
-
-model Settings {
-  id String @id
-
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
-
-  theme    String @default("light")
-  language String @default("en")
-  currency String @default("usd")
-  timezone String @default("utc")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
