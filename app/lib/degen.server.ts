@@ -44,7 +44,7 @@ export function computeTipAmount(args: {
 
   let tipAmount = 0;
   if (args.type === "pct") {
-    tipAmount = Math.round(allowance * (args.amount / 100));
+    tipAmount = Math.ceil(allowance * (args.amount / 100));
   } else {
     tipAmount = args.amount;
   }
