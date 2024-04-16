@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, json } from "@remix-run/node";
+import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
 import invariant from "tiny-invariant";
 import { db } from "~/lib/db.server";
 import { computeTipAmount, tipAllowance } from "~/lib/degen.server";
@@ -76,5 +76,38 @@ export async function action({ request }: ActionFunctionArgs) {
 
   return json({
     message: `Tipped ${tipAmount} $DEGEN`,
+  });
+}
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  const url = new URL(request.url);
+  //       `${env.hostUrl}/api/tip?type=degen&tipAmount=${amount}&tipType=${isPct ? "pct" : "amt"}`
+  const type = url.searchParams.get("type");
+  const tipAmount = url.searchParams.get("tipAmount");
+  const tipType = url.searchParams.get("tipType");
+
+  if (!type || !tipAmount || !tipType) {
+    return json(
+      {
+        message: "Invalid request",
+      },
+      { status: 400 }
+    );
+  }
+
+  invariant(type === "degen", "Invalid type");
+
+  return json({
+    name: tipType === "pct" ? `Tip ${tipAmount}% DEGEN` : `Tip ${tipAmount.toLocaleString()} DEGEN`,
+    icon: "gift",
+    description:
+      tipType === "pct"
+        ? `Tip ${tipAmount}% of your daily $DEGEN allowance in one click`
+        : `Tip ${tipAmount.toLocaleString()} $DEGEN in one click`,
+    postUrl: `${getSharedEnv().hostUrl}/api/tip?type=degen&tipAmount=${tipAmount}&tipType=${tipType}`,
+    aboutUrl: getSharedEnv().hostUrl,
+    action: {
+      type: "post",
+    },
   });
 }

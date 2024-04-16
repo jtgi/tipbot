@@ -70,19 +70,10 @@ export async function action({ request }: ActionFunctionArgs) {
     const isNook = request.headers.get("origin")?.includes("nook.social");
     const domain = !isNook ? "https://warpcast.com" : "https://nook.social";
     const wcUrl = new URL(`${domain}/~/add-cast-action`);
-    wcUrl.searchParams.append("actionType", "post");
     wcUrl.searchParams.append(
-      "name",
-      isPct ? `Tip ${amount}% DEGEN` : `Tip ${amount.toLocaleString()} DEGEN`
-    );
-    wcUrl.searchParams.append("icon", "gift");
-    wcUrl.searchParams.append(
-      "postUrl",
+      "url",
       `${env.hostUrl}/api/tip?type=degen&tipAmount=${amount}&tipType=${isPct ? "pct" : "amt"}`
     );
-
-    console.log(wcUrl.toString());
-
     return redirect(wcUrl.toString());
   } catch (e) {
     console.error(e);

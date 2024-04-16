@@ -32,4 +32,22 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  degenLogs DegenLog[]
+}
+
+model DegenLog {
+  id String @id
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  paperboyAmountUsed Int
+  degenApiAmountUsed Int
+  day                Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, day])
 }
