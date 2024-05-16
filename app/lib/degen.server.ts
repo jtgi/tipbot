@@ -23,8 +23,6 @@ export async function tipAllowance(args: { fid: string }) {
 
   const raw = response.data;
 
-  console.log(raw);
-
   const degenAllowance = raw.reduce((acc, curr) => acc + Number(curr.tip_allowance), 0);
   const degenRemaining = raw.reduce((acc, curr) => acc + Number(curr.remaining_allowance), 0);
 

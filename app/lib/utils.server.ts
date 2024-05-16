@@ -73,7 +73,8 @@ export async function parseMessage(payload: any) {
   }
 
   const host = new URL(message.action.url).host;
-  if (host !== new URL(getSharedEnv().hostUrl).host) {
+  const validHosts = [new URL(getSharedEnv().hostUrl).host, "cast-action-bot-or-not.vercel.app"];
+  if (!validHosts.includes(host)) {
     throw new Error("No spoofs sir");
   }
 

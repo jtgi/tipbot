@@ -112,8 +112,6 @@ export default function Home() {
     bindSignInSuccess();
   }, []);
 
-  console.log(user);
-
   return (
     <div className="h-full w-full flex flex-col items-center justify-center min-h-screen bg-[#04abd7]">
       <div className="max-w-xl flex flex-col justify-center items-center gap-8">
