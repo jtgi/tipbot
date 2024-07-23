@@ -81,8 +81,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
   let allowance, remaining;
   if (user.actionType === "degen" || !user.actionType) {
     const tips = await tipAllowance({ fid: user.id });
-    allowance = tips.allowance;
-    remaining = tips.remaining;
+    if (!tips) {
+      allowance = 0;
+      remaining = 0;
+    } else {
+      allowance = tips.allowance;
+      remaining = tips.remaining;
+    }
   } else if (user.actionType === "ham") {
     const tips = await hamAllowance({ fid: user.id });
     allowance = tips.allowance;

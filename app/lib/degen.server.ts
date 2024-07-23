@@ -16,28 +16,39 @@ export type PointsResponse = {
   }>;
 };
 
-export async function tipAllowance(args: { fid: string }) {
-  const response = await axios.get<PointsResponse["raw"]>(
-    `https://www.degen.tips/api/airdrop2/tip-allowance?fid=${args.fid}`
+export type PointsResponseV2 = Array<{
+  snapshot_day: Date;
+  fid: string;
+  user_rank: string;
+  tip_allowance: string;
+  remaining_tip_allowance: string;
+  wallet_addresses: string[];
+}>;
+
+export type TipAllowance = {
+  allowance: number;
+  remaining: number;
+  raw: PointsResponseV2[number];
+};
+
+export async function tipAllowance(args: { fid: string }): Promise<TipAllowance | null> {
+  const response = await axios.get<PointsResponseV2>(
+    `https://api.degen.tips/airdrop2/allowances?fid=${args.fid}`
   );
 
-  const raw = response.data;
-
-  const degenAllowance = raw.reduce((acc, curr) => acc + Number(curr.tip_allowance), 0);
-  const degenRemaining = raw.reduce((acc, curr) => acc + Number(curr.remaining_allowance), 0);
+  const latest = response.data[0];
+  if (!latest) {
+    return null;
+  }
 
   return {
-    raw,
-    allowance: isNaN(degenAllowance) ? 0 : degenAllowance,
-    remaining: isNaN(degenRemaining) ? 0 : degenRemaining,
+    raw: latest,
+    allowance: parseInt(latest.tip_allowance),
+    remaining: parseInt(latest.remaining_tip_allowance),
   };
 }
 
-export function computeTipAmount(args: {
-  tipAllowance: PointsResponse;
-  type: "pct" | "amt";
-  amount: number;
-}) {
+export function computeTipAmount(args: { tipAllowance: TipAllowance; type: "pct" | "amt"; amount: number }) {
   const { allowance, remaining } = args.tipAllowance;
 
   let tipAmount = 0;

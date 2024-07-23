@@ -42,6 +42,15 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
   const allowance = await tipAllowance({ fid: user.id });
+  if (!allowance) {
+    return json(
+      {
+        message: `No tip allocation. See degen.tips/airdrop2/current`,
+      },
+      { status: 400 }
+    );
+  }
+
   const tipAmount = computeTipAmount({
     tipAllowance: allowance,
     amount: result.data.tipAmount,
